@@ -15,8 +15,8 @@ export type QuartzComponentProps = {
   allFiles: QuartzPluginData[]
   displayClass?: "mobile-only" | "desktop-only"
 } & JSX.IntrinsicAttributes & {
-  [key: string]: any
-}
+    [key: string]: any
+  }
 
 export type QuartzComponent = ComponentType<QuartzComponentProps> & {
   css?: string
@@ -29,16 +29,18 @@ export type QuartzComponentConstructor<Options extends object | undefined = unde
 ) => QuartzComponent
 
 interface user {
-  username: string,
+  username: string
   role: string
 }
 
 export const users: user[] = [
-  { username: 'leon', role: 'player' },
-  { username: 'erich', role: 'player' },
-  { username: 'eric', role: 'player' },
-  { username: 'tim', role: 'player' },
-  { username: 'max', role: 'player' },
-  { username: 'paul', role: 'admin' }
-
+  { username: "leon", role: "player" },
+  { username: "erich", role: "player" },
+  { username: "eric", role: "player" },
+  { username: "tim", role: "player" },
+  { username: "max", role: "player" },
+  { username: "paul", role: "admin" },
 ]
+
+export const unauthorizedPopover =
+  "<div style='margin-top: 1rem'>Oops! No Peeking. Only authorized Users can see this file. Go back to bed.</div>"

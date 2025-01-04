@@ -1,3 +1,4 @@
+// ExplorerNode.tsx
 // @ts-ignore
 import { QuartzPluginData } from "../plugins/vfile"
 import {
@@ -163,6 +164,8 @@ type ExplorerNodeProps = {
 }
 
 export function ExplorerNode({ node, opts, fullPath, fileData }: ExplorerNodeProps) {
+  const allowedUsers = node.file?.frontmatter?.allowedUsers as string
+
   // Get options
   const folderBehavior = opts.folderClickBehavior
   const isDefaultOpen = opts.folderDefaultState === "open"
@@ -176,7 +179,11 @@ export function ExplorerNode({ node, opts, fullPath, fileData }: ExplorerNodePro
       {node.file ? (
         // Single file node
         <li key={node.file.slug}>
-          <a href={resolveRelative(fileData.slug!, node.file.slug!)} data-for={node.file.slug}>
+          <a
+            href={resolveRelative(fileData.slug!, node.file.slug!)}
+            data-for={node.file.slug}
+            data-allowedusers={allowedUsers}
+          >
             {node.displayName}
           </a>
         </li>

@@ -1,3 +1,4 @@
+// login.inline.ts
 import { users } from "../types";
 
 function capitalize(str: string) {
@@ -69,8 +70,6 @@ function login() {
     });
 }
 
-export function useUser() {
-    return localStorage.getItem('username');
-}
 
+//@ts-ignore
 const interval = setInterval(() => login(), 500)

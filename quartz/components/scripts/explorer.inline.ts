@@ -1,4 +1,5 @@
 import { FolderState } from "../ExplorerNode"
+import { getUser, isAuthorized } from "./util"
 
 type MaybeHTMLElement = HTMLElement | undefined
 let currentExplorerState: FolderState[]
@@ -89,7 +90,6 @@ function setupExplorer() {
   for (const { path, collapsed } of newExplorerState) {
     currentExplorerState.push({ path, collapsed: oldIndex.get(path) ?? collapsed })
   }
-
   currentExplorerState.map((folderState) => {
     const folderLi = document.querySelector(
       `[data-folderpath='${folderState.path}']`,
@@ -99,6 +99,40 @@ function setupExplorer() {
       setFolderState(folderUl, folderState.collapsed)
     }
   })
+
+  const user = getUser() ?? ""
+  // Leaf Node Access Control
+  const leafNodes = document.querySelectorAll("li a[data-for]")
+
+  let flag = true
+
+  leafNodes.forEach((node) => {
+    const allowedUsers = node.getAttribute("data-allowedusers") ?? ""
+
+    if (flag || allowedUsers !== "") {
+      console.log("Is Authorized: ", isAuthorized(user, allowedUsers), "for", node.getAttribute("data-for"))
+      flag = false
+    }
+
+    if (!isAuthorized(user, allowedUsers)) {
+      node.remove()
+    }
+  })
+
+  // Cleanup Empty Folders
+  let removed = true
+  while (removed) {
+    removed = false
+    document.querySelectorAll("li .folder-container").forEach((folderContainer) => {
+      const folderLi = folderContainer.closest("li")
+      if (!folderLi) return
+      // Check if there's any remaining file node in this folder (including nested children).
+      if (!folderLi.querySelector("a[data-for]")) {
+        folderLi.remove()
+        removed = true
+      }
+    })
+  }
 }
 
 window.addEventListener("resize", setupExplorer)

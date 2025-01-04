@@ -1,5 +1,9 @@
+import { QuartzComponentProps, users } from "../types"
+import { QuartzPluginData } from "../../plugins/vfile"
+
 export function registerEscapeHandler(outsideContainer: HTMLElement | null, cb: () => void) {
   if (!outsideContainer) return
+
   function click(this: HTMLElement, e: HTMLElementEventMap["click"]) {
     if (e.target !== this) return
     e.preventDefault()
@@ -23,4 +27,47 @@ export function removeAllChildren(node: HTMLElement) {
   while (node.firstChild) {
     node.removeChild(node.firstChild)
   }
+}
+
+export function parseComponentData(targetDocument?: Document): QuartzPluginData | null {
+  let currDocument = document
+  if (targetDocument) {
+    currDocument = targetDocument
+  }
+
+  const componentDataElement = currDocument.getElementById("protected-content-data")
+  if (!componentDataElement?.textContent) {
+    return null
+  }
+  const data = JSON.parse(componentDataElement.textContent) as QuartzComponentProps
+  return data.fileData
+}
+
+export function isAuthorized(user: string, arg2: QuartzPluginData | string): boolean {
+  const adminUsers = users.filter((u) => u.role === "admin").map((u) => u.username)
+
+  let allowedUsersString: string
+  if (typeof arg2 === "string") {
+    allowedUsersString = arg2
+  } else {
+    allowedUsersString = (arg2.frontmatter?.allowedUsers as string) ?? ""
+  }
+
+  // early exit if no allowed users, but user is admin
+  if (allowedUsersString === "") {
+    return adminUsers.includes(user)
+  }
+
+  const allowedUsers = allowedUsersString.split(",").map((u) => u.trim())
+
+  console.log("User: ", user, "Admins: ", adminUsers, "Allowed Users: ", allowedUsers)
+
+  if (allowedUsers.includes("all")) return true
+  if (!user) return false
+  if (adminUsers.includes(user)) return true
+  return allowedUsers.includes(user)
+}
+
+export function getUser() {
+  return localStorage.getItem("username")
 }

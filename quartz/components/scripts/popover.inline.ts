@@ -1,5 +1,7 @@
 import { computePosition, flip, inline, shift } from "@floating-ui/dom"
 import { normalizeRelativeURLs } from "../../util/path"
+import { parseComponentData, isAuthorized, getUser } from "./util"
+import { unauthorizedPopover } from "../types"
 
 const p = new DOMParser()
 async function mouseEnterHandler(
@@ -81,6 +83,18 @@ async function mouseEnterHandler(
       const contents = await response.text()
       const html = p.parseFromString(contents, "text/html")
       normalizeRelativeURLs(html, targetUrl)
+
+      // Access Control
+      const targetNoteComponentData = parseComponentData(html)
+      const authorized = targetNoteComponentData ? isAuthorized(getUser(), targetNoteComponentData) : false
+
+      if (!authorized) {
+        const unauthorized = document.createElement("div")
+        unauthorized.innerHTML = unauthorizedPopover
+        popoverInner.appendChild(unauthorized)
+        break
+      }
+
       const elts = [...html.getElementsByClassName("popover-hint")]
       if (elts.length === 0) return
 

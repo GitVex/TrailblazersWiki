@@ -1,3 +1,4 @@
+//Explorer.tsx
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
 import explorerStyle from "./styles/explorer.scss"
 
@@ -8,7 +9,7 @@ import { QuartzPluginData } from "../plugins/vfile"
 import { classNames } from "../util/lang"
 import { i18n } from "../i18n"
 
-// Options interface defined in `ExplorerNode` to avoid circular dependency
+// Options interface defined in ExplorerNode to avoid circular dependency
 const defaultOptions = {
   folderClickBehavior: "collapse",
   folderDefaultState: "collapsed",

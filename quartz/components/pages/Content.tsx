@@ -8,7 +8,7 @@ const Content: QuartzComponent = ({ fileData, tree }: QuartzComponentProps) => {
 
 
   return (
-    <article class={classString}>Now watch this drive
+    <article class={classString}>
       <div>{content}
       </div>
     </article>
