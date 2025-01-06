@@ -1,6 +1,6 @@
 import FlexSearch from "flexsearch"
 import { ContentDetails } from "../../plugins/emitters/contentIndex"
-import { registerEscapeHandler, removeAllChildren } from "./util"
+import { getUser, isAuthorized, registerEscapeHandler, removeAllChildren } from "./util"
 import { FullSlug, normalizeRelativeURLs, resolveRelative } from "../../util/path"
 
 interface Item {
@@ -9,6 +9,7 @@ interface Item {
   title: string
   content: string
   tags: string[]
+  allowedUsers?: string
 }
 
 // Can be expanded with things like "term" in the future
@@ -280,6 +281,7 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       title: searchType === "tags" ? data[slug].title : highlight(term, data[slug].title ?? ""),
       content: highlight(term, data[slug].content ?? "", true),
       tags: highlightTags(term.substring(1), data[slug].tags),
+      allowedUsers: data[slug].allowedUsers,
     }
   }
 
@@ -339,17 +341,23 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
   async function displayResults(finalResults: Item[]) {
     if (!results) return
 
+    //filter out results that are not allowed for the current user
+    const user = getUser() ?? ""
+    const allowedResults = finalResults.filter((result) => {
+      return isAuthorized(user, result.allowedUsers ?? "")
+    })
+
     removeAllChildren(results)
-    if (finalResults.length === 0) {
+    if (allowedResults.length === 0) {
       results.innerHTML = `<a class="result-card no-match">
           <h3>No results.</h3>
           <p>Try another search term?</p>
       </a>`
     } else {
-      results.append(...finalResults.map(resultToHTML))
+      results.append(...allowedResults.map(resultToHTML))
     }
 
-    if (finalResults.length === 0 && preview) {
+    if (allowedResults.length === 0 && preview) {
       // no results, clear previous preview
       removeAllChildren(preview)
     } else {
@@ -454,7 +462,10 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       ...getByField("content"),
       ...getByField("tags"),
     ])
-    const finalResults = [...allIds].map((id) => formatForDisplay(currentSearchTerm, id))
+
+    const finalResults = [...allIds]
+      .map((id) => formatForDisplay(currentSearchTerm, id))
+
     await displayResults(finalResults)
   }
 
@@ -485,6 +496,7 @@ async function fillDocument(data: { [key: FullSlug]: ContentDetails }) {
         title: fileData.title,
         content: fileData.content,
         tags: fileData.tags,
+        allowedUsers: fileData.allowedUsers,
       }),
     )
   }
