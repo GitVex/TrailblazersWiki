@@ -50,7 +50,12 @@ export function isAuthorized(user: string, arg2: QuartzPluginData | string): boo
   if (typeof arg2 === "string") {
     allowedUsersString = arg2
   } else {
-    allowedUsersString = (arg2.frontmatter?.allowedUsers as string) ?? ""
+    const frontmatterAllowedUsers = arg2.frontmatter?.allowedUsers
+    if (Array.isArray(frontmatterAllowedUsers)) {
+      allowedUsersString = frontmatterAllowedUsers.join(",")
+    } else {
+      allowedUsersString = frontmatterAllowedUsers as string ?? ""
+    }
   }
 
   // early exit if no allowed users, but user is admin
@@ -58,9 +63,7 @@ export function isAuthorized(user: string, arg2: QuartzPluginData | string): boo
     return adminUsers.includes(user)
   }
 
-  const allowedUsers = allowedUsersString.split(",").map((u) => u.trim())
-
-  console.log("User: ", user, "Admins: ", adminUsers, "Allowed Users: ", allowedUsers)
+  const allowedUsers = allowedUsersString.split(",").map((u) => u.trim().toLowerCase())
 
   if (allowedUsers.includes("all")) return true
   if (!user) return false

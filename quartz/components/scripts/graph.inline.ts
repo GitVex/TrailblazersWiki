@@ -15,7 +15,7 @@ import {
 } from "d3"
 import { Text, Graphics, Application, Container, Circle } from "pixi.js"
 import { Group as TweenGroup, Tween as Tweened } from "@tweenjs/tween.js"
-import { registerEscapeHandler, removeAllChildren } from "./util"
+import { getUser, isAuthorized, registerEscapeHandler, removeAllChildren } from "./util"
 import { FullSlug, SimpleSlug, getFullSlug, resolveRelative, simplifySlug } from "../../util/path"
 import { D3Config } from "../Graph"
 
@@ -52,6 +52,7 @@ type NodeRenderData = GraphicsInfo & {
 }
 
 const localStorageKey = "graph-visited"
+
 function getVisited(): Set<SimpleSlug> {
   return new Set(JSON.parse(localStorage.getItem(localStorageKey) ?? "[]"))
 }
@@ -143,17 +144,42 @@ async function renderGraph(container: string, fullSlug: FullSlug) {
     if (showTags) tags.forEach((tag) => neighbourhood.add(tag))
   }
 
-  const nodes = [...neighbourhood].map((url) => {
-    const text = url.startsWith("tags/") ? "#" + url.substring(5) : (data.get(url)?.title ?? url)
-    return {
-      id: url,
-      text,
-      tags: data.get(url)?.tags ?? [],
-    }
-  })
+  const user = getUser() ?? ""
+  const nodes = [...neighbourhood]
+    .map((url) => {
+      const text = url.startsWith("tags/") ? "#" + url.substring(5) : (data.get(url)?.title ?? url)
+      const allowedUsers = data.get(url)?.allowedUsers ?? ""
+
+      return {
+        id: url,
+        text,
+        tags: data.get(url)?.tags ?? [],
+        allowedUsers,
+      }
+    })
+    .filter((node) => {
+      // console.log(
+      //   "User",
+      //   user,
+      //   "has access to Node",
+      //   node.text,
+      //   "with allowedUsers",
+      //   node.allowedUsers,
+      //   ":",
+      //   isAuthorized(user, node.allowedUsers),
+      // )
+      return isAuthorized(user, node.allowedUsers)
+    })
+
+  // after filtering nodes, collect all node IDs still valid
+  const validNodeIds = new Set(nodes.map((n) => n.id))
+  const filteredLinks = links.filter(
+    (l) => validNodeIds.has(l.source) && validNodeIds.has(l.target),
+  )
+
   const graphData: { nodes: NodeData[]; links: LinkData[] } = {
     nodes,
-    links: links
+    links: filteredLinks
       .filter((l) => neighbourhood.has(l.source) && neighbourhood.has(l.target))
       .map((l) => ({
         source: nodes.find((n) => n.id === l.source)!,
@@ -213,6 +239,7 @@ async function renderGraph(container: string, fullSlug: FullSlug) {
   let hoveredNeighbours: Set<string> = new Set()
   const linkRenderData: LinkRenderData[] = []
   const nodeRenderData: NodeRenderData[] = []
+
   function updateHoverInfo(newHoveredId: string | null) {
     hoveredNodeId = newHoveredId
 

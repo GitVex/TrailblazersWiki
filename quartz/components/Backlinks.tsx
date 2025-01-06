@@ -1,5 +1,7 @@
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
 import style from "./styles/backlinks.scss"
+// @ts-ignore
+import script from "./scripts/backlinks.inline"
 import { resolveRelative, simplifySlug } from "../util/path"
 import { i18n } from "../i18n"
 import { classNames } from "../util/lang"
@@ -19,7 +21,7 @@ const Backlinks: QuartzComponent = ({
         {backlinkFiles.length > 0 ? (
           backlinkFiles.map((f) => (
             <li>
-              <a href={resolveRelative(fileData.slug!, f.slug!)} class="internal">
+              <a href={resolveRelative(fileData.slug!, f.slug!)} class="internal" data-allowedusers={f.frontmatter?.allowedUsers}>
                 {f.frontmatter?.title}
               </a>
             </li>
@@ -33,4 +35,6 @@ const Backlinks: QuartzComponent = ({
 }
 
 Backlinks.css = style
+Backlinks.afterDOMLoaded = script
+
 export default (() => Backlinks) satisfies QuartzComponentConstructor

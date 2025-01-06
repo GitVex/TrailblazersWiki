@@ -1,17 +1,18 @@
 import { parseComponentData, isAuthorized, getUser } from "./util"
 
 function auth() {
-  const user = getUser() ?? ""
-
-  const parsedComponentData = parseComponentData() ?? ""
-  const isUserAuthorized = isAuthorized(user, parsedComponentData)
-
   // Get unauthorized and authorized elements
   const unauthorized = document.getElementById("protected-content-unauthorized")
   const authorized = document.getElementById("protected-content-authorized")
-  if (!unauthorized || !authorized) return
+  if (!unauthorized || !authorized) {
+    // console.warn("Could not find protected-content-unauthorized or protected-content-authorized")
+    return
+  }
 
-  if (isUserAuthorized) {
+  const user = getUser() ?? ""
+  const parsedComponentData = parseComponentData() ?? ""
+
+  if (isAuthorized(user, parsedComponentData)) {
     unauthorized.style.display = "none"
     authorized.style.display = "block"
   } else {
@@ -20,8 +21,6 @@ function auth() {
   }
 }
 
-export function run_auth() {
-  setInterval(() => auth(), 500)
-}
+document.addEventListener("nav", () => auth())
+// window.addCleanup(() => document.removeEventListener("nav", () => auth()))
 
-run_auth()

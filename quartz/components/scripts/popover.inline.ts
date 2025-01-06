@@ -86,7 +86,7 @@ async function mouseEnterHandler(
 
       // Access Control
       const targetNoteComponentData = parseComponentData(html)
-      const authorized = targetNoteComponentData ? isAuthorized(getUser(), targetNoteComponentData) : false
+      const authorized = targetNoteComponentData ? isAuthorized(getUser() ?? "", targetNoteComponentData) : false
 
       if (!authorized) {
         const unauthorized = document.createElement("div")

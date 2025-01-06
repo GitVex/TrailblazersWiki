@@ -101,18 +101,15 @@ function setupExplorer() {
   })
 
   const user = getUser() ?? ""
+  // constrain search to explorer container, otherwise ToC elements will be removed
+  const explorerContainer = document.getElementById("explorer-content")
+  if (!explorerContainer) console.warn("Could not find Explorer")
+
   // Leaf Node Access Control
-  const leafNodes = document.querySelectorAll("li a[data-for]")
+  const leafNodes = explorerContainer?.querySelectorAll("li a[data-for]")
 
-  let flag = true
-
-  leafNodes.forEach((node) => {
+  leafNodes?.forEach((node) => {
     const allowedUsers = node.getAttribute("data-allowedusers") ?? ""
-
-    if (flag || allowedUsers !== "") {
-      console.log("Is Authorized: ", isAuthorized(user, allowedUsers), "for", node.getAttribute("data-for"))
-      flag = false
-    }
 
     if (!isAuthorized(user, allowedUsers)) {
       node.remove()
@@ -123,9 +120,10 @@ function setupExplorer() {
   let removed = true
   while (removed) {
     removed = false
-    document.querySelectorAll("li .folder-container").forEach((folderContainer) => {
+    explorerContainer?.querySelectorAll("li .folder-container").forEach((folderContainer) => {
       const folderLi = folderContainer.closest("li")
       if (!folderLi) return
+
       // Check if there's any remaining file node in this folder (including nested children).
       if (!folderLi.querySelector("a[data-for]")) {
         folderLi.remove()

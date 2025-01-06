@@ -2,6 +2,9 @@ import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } fro
 import path from "path"
 
 import style from "../styles/listPage.scss"
+// @ts-ignore
+import script from "../scripts/folderContent.inline"
+
 import { byDateAndAlphabetical, PageList, SortFn } from "../PageList"
 import { stripSlashes, simplifySlug, joinSegments, FullSlug } from "../../util/path"
 import { Root } from "hast"
@@ -103,5 +106,7 @@ export default ((opts?: Partial<FolderContentOptions>) => {
   }
 
   FolderContent.css = style + PageList.css
+  FolderContent.afterDOMLoaded = script
+
   return FolderContent
 }) satisfies QuartzComponentConstructor
