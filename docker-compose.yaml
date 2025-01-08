@@ -7,8 +7,8 @@ services:
 
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.prod_bardicinspiration.rule=Host(`trailblazers.bardicinspiration.dev`)'
-      - 'traefik.http.services.prod_bardicinspiration.loadbalancer.server.port=8100'
+      - 'traefik.http.routers.trailblazers.rule=Host(`trailblazers.bardicinspiration.cc`)'
+      - 'traefik.http.services.trailblazers.loadbalancer.server.port=8100'
     networks:
       - traefik_web
 
