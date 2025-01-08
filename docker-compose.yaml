@@ -1,0 +1,19 @@
+name: trailblazers_wiki
+services:
+  app:
+    build: .
+    ports:
+      - "8100:8100"
+    volumes:
+      - /home/trailblazer_server/TrailblazersWebsite/content/Obsidian/Trailblazers/Trailblazers:/usr/src/app/content
+
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.prod_bardicinspiration.rule=Host(`trailblazers.bardicinspiration.dev`)'
+      - 'traefik.http.services.prod_bardicinspiration.loadbalancer.server.port=3000'
+    networks:
+      - traefik_web
+
+networks:
+  traefik_web:
+    external: true

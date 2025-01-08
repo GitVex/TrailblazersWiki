@@ -37,8 +37,6 @@ export const PageList: QuartzComponent = ({ cfg, fileData, allFiles, limit, sort
     list = list.slice(0, limit)
   }
 
-  allFiles[0].frontmatter?.allowedUsers
-
   return (
     <ul id="page-list" class="section-ul">
       {list.map((page) => {
