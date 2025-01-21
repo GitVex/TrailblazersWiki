@@ -39,6 +39,7 @@ export const users: user[] = [
   { username: "eric", role: "player" },
   { username: "tim", role: "player" },
   { username: "max", role: "player" },
+  { username: "nils", role: "player"},
   { username: "paul", role: "admin" },
 ]
 

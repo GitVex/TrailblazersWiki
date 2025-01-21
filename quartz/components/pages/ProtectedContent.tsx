@@ -11,10 +11,9 @@ const ProtectedContent: QuartzComponent = (componentData: QuartzComponentProps) 
   return (<>
       <div class="protected-content">
         <div id="protected-content-unauthorized" style={{ display: "none" }}>
-          <p>Oops, No peeking! Only {allowedUsers} can see this file. Go back to bed.</p>
+          <p>Oops, No peeking! Only authorized users can see this file. Go back to bed.</p>
         </div>
         <div id="protected-content-authorized" style={{ display: "none" }}>
-          Only {allowedUsers} can see this file.
           {Content(componentData)}
         </div>
       </div>
