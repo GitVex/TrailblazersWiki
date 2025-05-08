@@ -15,8 +15,8 @@ export type QuartzComponentProps = {
   allFiles: QuartzPluginData[]
   displayClass?: "mobile-only" | "desktop-only"
 } & JSX.IntrinsicAttributes & {
-    [key: string]: any
-  }
+  [key: string]: any
+}
 
 export type QuartzComponent = ComponentType<QuartzComponentProps> & {
   css?: string
@@ -39,7 +39,8 @@ export const users: user[] = [
   { username: "eric", role: "player" },
   { username: "tim", role: "player" },
   { username: "max", role: "player" },
-  { username: "nils", role: "player"},
+  { username: "nils", role: "player" },
+  { username: "phillip", role: "player" },
   { username: "paul", role: "admin" },
 ]
 
