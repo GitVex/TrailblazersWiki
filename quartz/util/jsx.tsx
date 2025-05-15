@@ -10,6 +10,8 @@ const customComponents: Components = {
       <table {...props} />
     </div>
   ),
+
+  // TODO: Add Redaction component here maybe?
 }
 
 export function htmlToJsx(fp: FilePath, tree: Node) {

@@ -1,4 +1,4 @@
-eximport { QuartzComponentConstructor, QuartzComponentProps } from "./types";
+import { QuartzComponentConstructor, QuartzComponentProps } from "./types";
 import { classNames } from "../util/lang";
 //@ts-ignore
 import script from "./scripts/login.inline";
