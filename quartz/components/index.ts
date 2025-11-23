@@ -22,6 +22,7 @@ import RecentNotes from "./RecentNotes"
 import Breadcrumbs from "./Breadcrumbs"
 import Comments from "./Comments"
 import Login from "./Login"
+import VersionInfo from "./VersionInfo"
 
 export {
   ArticleTitle,
@@ -47,5 +48,6 @@ export {
   Breadcrumbs,
   Comments,
   Login,
-  ProtectedContent
+  ProtectedContent,
+  VersionInfo
 }
