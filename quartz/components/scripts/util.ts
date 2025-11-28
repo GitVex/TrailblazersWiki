@@ -71,6 +71,37 @@ export function isAuthorized(user: string, arg2: QuartzPluginData | string): boo
   return allowedUsers.includes(user)
 }
 
+// make another version of the isAuthorized version that checks the elevatedUsers frontmatter field
+export function isElevated(user: string, arg2: QuartzPluginData | string): boolean {
+  const adminUsers = users.filter((u) => u.role === "admin").map((u) => u.username)
+
+  let elevatedUsersString: string
+  if (typeof arg2 === "string") {
+    elevatedUsersString = arg2
+  } else {
+    const frontmatterElevatedUsers = arg2.frontmatter?.elevatedUsers
+    if (Array.isArray(frontmatterElevatedUsers)) {
+      elevatedUsersString = frontmatterElevatedUsers.join(",")
+    } else {
+      elevatedUsersString = frontmatterElevatedUsers as string ?? ""
+    }
+  }
+
+  // early exit if no elevated users, but user is admin
+  if (elevatedUsersString === "") {
+    return adminUsers.includes(user)
+  }
+
+  const elevatedUsers = elevatedUsersString.split(",").map((u) => u.trim().toLowerCase())
+
+  if (elevatedUsers.includes("all")) return true
+  if (!user) return false
+  if (adminUsers.includes(user)) return true
+  return elevatedUsers.includes(user)
+}
+
+
+
 export function getUser() {
   return localStorage.getItem("username")
 }
