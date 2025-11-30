@@ -24,7 +24,7 @@ function applyRedactions() {
       const element = el as HTMLElement
 
       // 1. Lock the width to prevent jittering as characters move
-      const currentWidth = element.getBoundingClientRect().width
+      const currentWidth = element.getBoundingClientRect().width + 5
       if (currentWidth > 0) {
         element.style.width = `${currentWidth}px`
         element.style.display = 'inline-block'
