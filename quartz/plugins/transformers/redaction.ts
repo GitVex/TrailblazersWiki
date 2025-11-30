@@ -90,7 +90,7 @@ export const Redactions: QuartzTransformerPlugin = () => {
 
           // --- 2. Handle Inline Redactions (Spans) ---
           // We visit parents of phrasing content (Paragraphs, Headings, etc)
-          visit(tree, ['paragraph', 'heading', 'emphasis', 'strong', 'link', 'blockquote'], (node: any) => {
+          visit(tree, (node: any) => {
             if (!node.children || node.children.length === 0) return
 
             const newChildren: PhrasingContent[] = []
